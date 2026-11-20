@@ -16,6 +16,7 @@ import server.maps.MapItem;
 import server.maps.MapObject;
 import server.maps.MapObjectType;
 import server.maps.MapleMap;
+import soloMapling.ArtificialPlayer.BotHelpers;
 import soloMapling.ArtificialPlayer.GCMoveSystem.GCMovement;
 import soloMapling.server.MethodScheduler;
 import tools.PacketCreator;
@@ -181,6 +182,15 @@ public final class BotAttackEffects {
         // index-based fan-out vanilla uses, so loot spreads out instead of stacking.
         int index = 1;
         for (MonsterDropEntry de : drops) {
+            // Quest items: only roll if a real player on this map needs it, and drop it quest-tagged
+            // (owned by that player) so nobody else sees it - same rule as a player's own kill.
+            Character questOwner = null;
+            if (de.questid > 0) {
+                questOwner = playerNeedingQuestItem(map, de.questid, de.itemId);
+                if (questOwner == null) {
+                    continue;
+                }
+            }
             int dropChance = (int) Math.min((long) de.chance * dropRate, Integer.MAX_VALUE);
             if (Randomizer.nextInt(999999) >= dropChance) {
                 continue;
@@ -204,10 +214,24 @@ public final class BotAttackEffects {
                     short qty = (short) (de.Maximum != 1 ? rollAmount(de.Minimum, de.Maximum) : 1);
                     item = new Item(de.itemId, (short) 0, qty);
                 }
-                map.spawnItemDrop(mob, bot, item, pos, dropType, /* playerDrop */ false);
+                if (questOwner != null) {
+                    map.spawnQuestItemDrop(item, pos, mob, questOwner, (byte) 0, (short) de.questid, delay);
+                } else {
+                    map.spawnItemDrop(mob, bot, item, pos, dropType, /* playerDrop */ false);
+                }
                 index++;
             }
         }
+    }
+
+    /* A logged-in (non-bot) player on the map who still needs this quest item, or null. */
+    private static Character playerNeedingQuestItem(MapleMap map, int questId, int itemId) {
+        for (Character p : map.getAllPlayers()) {
+            if (p.isLoggedinWorld() && !BotHelpers.isBot(p) && p.needQuestItem(questId, itemId)) {
+                return p;
+            }
+        }
+        return null;
     }
 
     /* Inclusive-ish amount roll matching vanilla (min..max), guarded against nextInt(0). */

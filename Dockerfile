@@ -1,48 +1,46 @@
-# Initial Docker support thanks to xinyifly
-# Optimisation performed by wejrox
+# SoloMapling (Cosmic v83 + ArtificialPlayer framework) Docker image
+# Based on the upstream Cosmic Dockerfile (xinyifly / wejrox), extended for SoloMapling's
+# runtime data files, which are read from CWD-relative "src/main/java/..." paths.
 
 #
-# Cosmic JAR creation stage
+# Stage 1: build the JAR
 #
 FROM maven:3.9.6-amazoncorretto-21 AS jar
-
-# Build in a separated location which won't have permissions issues.
 WORKDIR /opt/cosmic
 
-# Any changes to the pom will affect the entire build, so it should be copied first.
+# pom first so dependency layers cache across source edits
 COPY pom.xml ./pom.xml
-
-# Grab all the dependencies listed in the pom early, since it prevents changes to source code from requiring a complete re-download.
-# Skip compiling tests since we don't want all the dependencies to be downloaded.
-# RUN mvn -f ./pom.xml clean dependency:go-offline -Dmaven.test.skip -T 1C
-# TODO: The above command stopped working as of Java 21 upgrade due to:
-# Failed to execute goal org.apache.maven.plugins:maven-dependency-plugin:3.6.1:go-offline (default-cli) on project Cosmic: org.eclipse.aether.resolution.DependencyResolutionException: The following artifacts could
-# not be resolved: io.netty:netty-tcnative:jar:${os.detected.classifier}:2.0.65.Final (absent): Could not find artifact io.netty:netty-tcnative:jar:${os.detected.classifier}:2.0.65.Final in central (https://repo.maven.apache.org/maven2) -> [Help 1]
-
-# Source code changes may not change dependencies, so it can go last.
-# Skip compiling tests since we don't want all the dependecies to be downloaded for plugins.
 COPY src ./src
 RUN mvn -f ./pom.xml clean package -Dmaven.test.skip -T 1C
 
+# Collect every non-Java file under src/main/java (bot dialogue YAML, item pools,
+# movement recordings, FM shop names, town pins, version tables...) with its path
+# intact, because the bot framework loads them via "src/main/java/soloMapling/..."
+RUN mkdir -p /opt/botdata \
+ && find src/main/java -type f ! -name '*.java' -exec cp --parents {} /opt/botdata/ \;
+
 #
-# Server creation stage
+# Stage 2: runtime
 #
 FROM amazoncorretto:21
-
-# Host the server in a location that won't have permissions issues.
 WORKDIR /opt/server
-# Copy the wizet files first since they're so big and won't change often.
+
+# WZ data first: large and rarely changes (WzXmlPatcher edits Item.wz in place at startup)
 COPY wz ./wz
-# Copy the JAR we build earlier.
 COPY --from=jar /opt/cosmic/target/Cosmic.jar ./Server.jar
-# Scripts are sourced on server startup, so you can mount over them for quicker redeploy.
+COPY --from=jar /opt/botdata/src ./src
 COPY scripts ./scripts/
-# Config is read on server startup, so you can mount over it for quicker redeploy.
 COPY config.yaml ./
-# Default exposure, although not required if using docker compose.
-# This exposes the login server, and channels.
-# Format for channels: WWCC, where WW is 75 plus the world number and CC is 75 plus the channel number (both zero indexed).
+
+# Runtime output: log4j -> logs/, nav graph cache -> cache/, BotLogger -> ./BotLog.txt
+# BotLog.txt is symlinked into logs/ so a single volume captures all logs.
+RUN mkdir -p logs cache \
+ && ln -s logs/BotLog.txt BotLog.txt
+
+# Same heap as launch.bat; override with JAVA_OPTS
+ENV JAVA_OPTS="-Xmx3g"
+
+# Login server + world 0 channels 1-3 (port = 7575 + (channel-1) + world*100)
 EXPOSE 8484 7575 7576 7577
-ENTRYPOINT ["java", "-jar", "./Server.jar"]
 
-
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -Dwz-path=wz -jar ./Server.jar"]

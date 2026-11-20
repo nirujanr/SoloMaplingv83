@@ -2,12 +2,26 @@
 .idea
 .git
 .github
+.mvn
 
-# Not used by the build.
+# Not used by the build
 docs
 handbook
 sql
 tools
+*.md
+launch.bat
 
-# Created by the db when using docker-compose, large and causes rebuild issues if sent to the context.
-docker-db-data
+# 138 MB of screenshots/videos, not needed in the image
+src/main/java/soloMapling/Documents
+
+# Local build/runtime output
+target
+logs
+cache
+BotLog.txt
+database/docker-db-data
+database/docker-pg-db-data
+
+# Dashboard has its own image
+fm-dashboard

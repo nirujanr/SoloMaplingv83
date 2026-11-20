@@ -62,7 +62,7 @@ function action(mode, type, selection) {
                     return;
                 }
 
-                cm.sendSimple("#e#b<Party Quest: 1st Accompaniment>\r\n#k#n" + em.getProperty("party") + "\r\n\r\nHow about you and your party members collectively beating a quest? Here you'll find obstacles and problems where you won't be able to beat it without great teamwork. If you want to try it, please tell the #bleader of your party#k to talk to me.#b\r\n#L0#I want to participate in the party quest.\r\n#L1#I would like to " + (cm.getPlayer().isRecvPartySearchInviteEnabled() ? "disable" : "enable") + " Party Search.\r\n#L2#I would like to hear more details.");
+                cm.sendSimple("#e#b<Party Quest: 1st Accompaniment>\r\n#k#n" + em.getProperty("party") + "\r\n\r\nHow about you and your party members collectively beating a quest? Here you'll find obstacles and problems where you won't be able to beat it without great teamwork. If you want to try it, please tell the #bleader of your party#k to talk to me.#b\r\n#L0#I want to participate in the party quest.\r\n#L1#I would like to " + (cm.getPlayer().isRecvPartySearchInviteEnabled() ? "disable" : "enable") + " Party Search.\r\n#L2#I would like to hear more details.\r\n#L3#Solo party: bring adventurers to fill my party and start.");
             }
         } else if (status == 1) {
             if (state == 1) {
@@ -88,6 +88,23 @@ function action(mode, type, selection) {
 
                         cm.dispose();
                     }
+                } else if (selection == 3) {
+                    // SoloMapling: fill the party with KPQ bots (level 21-30) and start right away.
+                    var KPQSoloParty = Java.type('soloMapling.ArtificialPlayer.BotTypes.KPQ.KPQSoloParty');
+                    var err = KPQSoloParty.fillParty(cm.getPlayer());
+                    if (err != null) {
+                        cm.sendOk(err);
+                    } else {
+                        var soloEli = em.getEligibleParty(cm.getParty());
+                        if (soloEli.size() > 0) {
+                            if (!em.startInstance(cm.getParty(), cm.getPlayer().getMap(), 1)) {
+                                cm.sendOk("Another party has already entered the #rParty Quest#k in this channel. Please try another channel, or wait for the current party to finish.");
+                            }
+                        } else {
+                            cm.sendOk("Your party is ready, but some members aren't eligible (level 21+, standing in Kerning City). Make sure everyone in your party is here and talk to me again.");
+                        }
+                    }
+                    cm.dispose();
                 } else if (selection == 1) {
                     var psState = cm.getPlayer().toggleRecvPartySearchInvite();
                     cm.sendOk("Your Party Search status is now: #b" + (psState ? "enabled" : "disabled") + "#k. Talk to me whenever you want to change it back.");

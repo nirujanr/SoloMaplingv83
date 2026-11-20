@@ -274,6 +274,9 @@ function action(mode, type, selection) {
             if (!eim.giveEventReward(cm.getPlayer())) {
                 cm.sendNext("Please make room on your inventory first!");
             } else {
+                // SoloMapling: 50 NX Credit (type 1) for clearing, given together with the random item
+                cm.getPlayer().getCashShop().gainCash(1, 50);
+                cm.getPlayer().dropMessage(6, "You received 50 NX for clearing the Kerning PQ!");
                 cm.warp(103000805, "st00");
             }
 

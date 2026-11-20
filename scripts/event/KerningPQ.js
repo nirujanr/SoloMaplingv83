@@ -25,7 +25,7 @@
 
 var isPq = true;
 var minPlayers = 3, maxPlayers = 4;
-var minLevel = 21, maxLevel = 30;
+var minLevel = 21, maxLevel = 255;   // SoloMapling: no level cap (originally 21 ~ 30)
 var entryMap = 103000800;
 var exitMap = 103000890;
 var recruitMap = 103000000;
@@ -57,7 +57,9 @@ function setEventRequirements() {
     }
 
     reqStr += "\r\n    Level range: ";
-    if (maxLevel - minLevel >= 1) {
+    if (maxLevel >= 200) {
+        reqStr += minLevel + "+";
+    } else if (maxLevel - minLevel >= 1) {
         reqStr += minLevel + " ~ " + maxLevel;
     } else {
         reqStr += minLevel;

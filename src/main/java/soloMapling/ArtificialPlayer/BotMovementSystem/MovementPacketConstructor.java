@@ -297,6 +297,20 @@ public class MovementPacketConstructor {
         return p;
     }
 
+    // A single still movement at (x,y) with an explicit stance, e.g. CharacterStance.ROPE_STANCE to hang
+    // on a rope. Unlike createIdleStandlingPacket the stance is sent as-is (not forced to standing).
+    public static InPacket createStillStancePacket(short xpos, short ypos, short fh, byte stance) {
+        ByteBuf byteBuf = Unpooled.buffer();
+        for (int i = 0; i < 9; i++) {
+            byteBuf.writeByte(0); // first 9 bytes that will be skipped
+        }
+        byteBuf.writeByte(1); // numCommands
+        SingleMoveCommand packRec = new SingleMoveCommand(NORMAL,
+                xpos, ypos, (short) 0, (short) 0, fh, stance, (short) 200);
+        writeMovePackDataToByteBuf(byteBuf, packRec);
+        return new ByteBufInPacket(byteBuf);
+    }
+
     // This works okay. not the best.
     public static InPacket createFallDownPacket(Character fakechar) {
         short xpos = (short) fakechar.getPosition().getX();

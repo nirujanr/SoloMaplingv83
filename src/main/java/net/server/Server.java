@@ -948,6 +948,8 @@ public class Server {
         log.info("Listening on port 8484");
 
         online = true;
+        soloMapling.server.FMListingExporter.start(); // feeds the fm-dashboard container
+        soloMapling.ArtificialPlayer.BotTypes.PawnBrokerBot.scheduleAutoSpawn(); // Pawn Broker at the FM Entrance
         Duration initDuration = Duration.between(beforeInit, Instant.now());
         log.info("Cosmic is now online after {} ms.", initDuration.toMillis());
 

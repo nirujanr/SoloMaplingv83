@@ -1,0 +1,364 @@
+quest_id	min_level	missing_script	name	quest_group
+1028	0	start	To Lith Harbor!	For a new world
+1048	8	start	Job Recommendation	
+1049	10	start	Becoming a Warrior	
+1050	8	start	Becoming a Magician	
+1051	10	start	Becoming a Bowman	
+1052	10	start	Becoming a Thief	
+1053	10	start	Becoming a Pirate	
+1054	20	start	Cygnus Knights	
+2147	0	end+start	스텀피의 묘목 기르기	
+2233	0	end	Raise the Rep!	Captain Al's Passing of Knowledge
+2234	0	end	Enjoy the Entitlement!	Captain Al's Passing of Knowledge
+4482	25	end+start	Socks Actual Creation Action	
+4483	25	end	Socks Hanging	
+4490	25	end+start	Bicho's snowman	
+4676	0	end	Naomi's Invitation 2	
+6700	10	end	The Bowman's Road	
+8247	0	end	Donate Your Notebook	
+9432	0	end	북극곰 포치의 부탁	
+9633	0	start	테오의 옛날 추억 회상 II	
+9680	0	start	카산드라의 마법	
+9682	10	end	매일매일 이벤트 3월 5일	
+9683	10	end	매일매일 이벤트 3월 12일	
+9684	10	end	매일매일 이벤트 3월 19일	
+9685	10	end	매일매일 이벤트 3월 26일	
+9690	10	end	초성퀴즈 2월 13일	
+9691	10	end	초성퀴즈 2월 14일	
+9692	10	end	초성퀴즈 2월 15일	
+9693	10	end	초성퀴즈 2월 16일	
+9694	10	end	초성퀴즈 2월 17일	
+9695	10	end	초성퀴즈 2월 18일	
+9696	10	end	초성퀴즈 2월 19일	
+9697	10	end	초성퀴즈 2월 20일	
+9698	10	end	초성퀴즈 2월 21일	
+9699	10	end	초성퀴즈 2월 22일	
+9700	10	end	초성퀴즈 2월 23일	
+9701	10	end	초성퀴즈 2월 24일	
+9702	10	end	초성퀴즈 2월 25일	
+9703	10	end	초성퀴즈 2월 26일	
+9730	10	end	To Fool a Liar	
+9731	31	end	To Fool a Liar	
+9732	71	end	To Fool a Liar	
+9733	10	end	Help out Gordon!	
+9734	31	end	Help out Gordon!!	
+9735	71	end	Help out Gordon!!!	
+9745	10	end	커플을 위한 다크 초콜릿	
+9746	31	end	커플을 위한 다크 초콜릿!	
+9747	71	end	커플을 위한 다크 초콜릿!!	
+9840	0	end	Dr. Winston's Research	
+9841	30	end	Violent Monkeys	
+9842	0	end	Icarus's Mushroom Bites	
+9844	30	end	Regulate the Star Pixies	
+9845	50	end	The Wailing White Fang	
+9846	35	end	The Clocktower	
+9847	30	end	Guard the Omega Sector	
+9849	60	end	No Gong's Test	
+9850	65	end	Do Gong's Test	
+9851	25	start	Snake Pit in the Swamp	
+9860	0	start	Cassandra's Magic	
+9875	10	end+start	Growing a Sprout	
+9878	0	end	Magatia, the City of Alchemy	
+9880	15	end+start	현상수배 : 마노	
+9881	31	end+start	현상수배 : 스텀피	
+9882	41	end+start	현상수배 : 킹크랑	
+9883	66	end+start	현상수배 : 태륜	
+9884	81	end+start	현상수배 : 엘리쟈	
+9885	90	end+start	현상수배 : 스노우맨	
+9887	10	end	카산드라의 선물	
+9890	0	start	카산드라의 마법	
+9891	0	start	카산드라의 마법	
+9892	0	start	카산드라의 마법	
+9893	0	start	카산드라의 마법	
+9900	10	end	즐거운 한가위	
+9901	10	end	추석맞이 초성퀴즈	
+9902	0	end	마노 퇴치하기	
+9903	0	end	스텀피 퇴치하기	
+9904	0	end	킹크랑 퇴치하기	
+9905	0	end	구미호 퇴치하기	
+9906	0	end	태륜 퇴치하기	
+9907	0	end	요괴선사 퇴치하기	
+9908	0	end	엘리쟈 퇴치하기	
+9909	0	end	스노우맨 퇴치하기	
+9920	10	end	가면신사의 초대	
+9922	10	end+start	고양이의 충고	
+9924	10	start	사탕주지 않으면 장난칠 테야!	
+9925	21	start	사탕주지 않으면 장난칠 테야!!	
+9926	41	start	사탕주지 않으면 장난칠 테야!!!	
+9927	10	end	가면신사와의 대화	
+9928	10	end	이상한 소녀	
+9929	10	end+start	인형장인 조나스	
+9930	10	end	완벽한 연장	
+9931	10	end	소필리아의 초상화	
+9932	10	end	루드밀라의 귀고리	
+9933	10	end	좋은 음악	
+9934	10	end	향기로운 음식	
+9935	10	end	소필리아의 눈물	
+9936	10	end	새로운 기회	
+9937	0	start	다른 쪽으로 가고 싶어졌어	
+9938	0	start	결정을 번복하고 싶다 	
+9939	0	start	잘못 대답한 것 같다	
+9943	10	end	잊혀진 이름	
+9947	0	start	인형을 돌려드리겠어요.	
+9950	11	end	해적 레벨업 이벤트 	
+9951	10	end	...Pirates!?	
+9961	10	end+start	새해 운세보기	
+9965	0	start	별도장 받기	
+9970	10	end	페티트의 수리부품	
+9980	10	start	Tienk's Monster Card	
+9981	2	end	4 Year Anniversary Level Up event	
+9982	10	start	5개의 촛불	
+9983	10	start	5주년 축하 케이크	
+9984	10	end	Putting the Maple Leaf in my mouth...	
+9985	10	end	Making Maple Syrup	
+9990	10	start	Gaga's Maple Leaf	
+9991	13	start	스피드 퀴즈	
+9997	10	start	작전명MS-07	
+10002	10	end	Number of Special Agent Badges 	
+10008	10	start	Information on Master M	
+10010	10	end	Special Order: Find Master M's Orders!	
+10011	31	end	Special Order: Find Master M's Orders!	
+10012	51	end	Special Order: Find Master M's Orders!	
+10014	10	start	Today's Mission!	
+10034	13	start	추석맞이 달나라 여행	
+10036	13	end+start	달은 어떻게 생겼나요	
+10037	0	end	카산드라의 도움	
+10039	13	end	Surprise Event : Special Alphabets	
+10043	13	start	달꽃떡 받기	
+10046	13	start	아기새를 부탁해	
+10050	13	end	아기새의 깃털	
+10052	13	start	메이플 2000일의 이야기	
+10059	13	start	Gaga's Favorite Song	
+10066	0	end	과거의 기억	조이의 정체
+10069	0	end	유령 T는 누구일까?	페토와 집사 그리고 유령T
+10074	0	start	페토 변신	
+10075	0	end	조나스의 뉘우침	행복한 가족
+10076	0	end	소필리아의 뉘우침	행복한 가족
+10077	0	end	루드밀라의 뉘우침	행복한 가족
+10078	0	end	집사의 뉘우침	
+10079	0	end	조이의 뉘우침	
+10082	13	start	메이플스토리 그린 캠페인	
+10083	13	end	장로스탄의 응원	
+10084	13	end	피아의 응원	
+10085	13	end	에스텔의 응원	
+10086	13	end	요정 윙의 응원	
+10087	13	end	천지의 응원	
+10088	13	end	이카루스의 응원	
+10089	13	end	만지의 응원	
+10090	13	end	돼지와 함께 춤을의 응원	
+10091	13	end	리드의 응원	
+10092	13	end	베인의 응원	
+10093	13	end	기억하고 있는 자의 응원	
+10094	13	end	찰리중사의 응원	
+10095	13	end	스카두르의 응원	
+10096	13	end	티건의 응원	
+10097	13	end	세쟌의 응원	
+10098	13	end	필리아의 응원	
+10099	13	end	노공의 응원	
+10100	13	end	도공의 응원	
+10101	13	end	구영감의 응원	
+10102	13	end	촌장 타타모의 응원	
+10103	13	end	지니의 응원	
+10104	13	end	Book of Cygnus Vol. 1	Book of Cygnus
+10105	13	end	Book of Cygnus Vol. 2	Book of Cygnus
+10106	13	end	Book of Cygnus Vol. 3	Book of Cygnus
+10108	13	start	그린 캠페인 훈장 바꾸기	
+10110	0	end	골드리치의 초대	
+10206	13	end+start	Remnants of Black Mage	
+10207	31	end+start	Remnants of Black Mage	
+10208	61	end+start	Remnants of Black Mage	
+10209	91	end+start	Remnants of Black Mage	
+10210	13	start	Gaga's Analysis	
+10211	31	start	Gaga's Analysis	
+10212	61	start	Gaga's Analysis	
+10213	91	start	Gaga's Analysis	
+10214	13	start	Cassandra's Analysis	
+10215	31	start	Gaga's Analysis	
+10216	61	start	Gaga's Analysis	
+10217	91	start	Gaga's Analysis	
+10218	0	end+start	가가의 크리스마스 추억	
+10219	13	start	카산드라의 두번째 새해선물	
+10220	13	start	스피드 퀴즈	
+10222	0	start	두근두근 메이플!두근두근 나의 펫!	
+10224	15	start	Starlight Festival	
+10231	0	start	Golden Pig's Egg	
+10240	10	end	카산드라의 봄꽃축제	
+10241	40	end	카산드라의 봄꽃축제	
+10242	10	end	베티의 봄꽃연구1	
+10243	10	end	베티의 봄꽃연구2	
+10244	10	end	베티의 봄꽃연구3	
+10245	30	end	리사의 봄꽃연구1	
+10246	30	end	리사의 봄꽃연구2	
+10247	30	end	리사의 봄꽃연구3	
+10248	50	end	콩쥐의 봄꽃연구1	
+10249	50	end	콩쥐의 봄꽃연구2	
+10250	50	end	콩쥐의 봄꽃연구3	
+10251	90	end	키니의 봄꽃연구1	
+10252	90	end	키니의 봄꽃연구2	
+10253	90	end	키니의 봄꽃연구3	
+10254	120	end	촌장 타타모의 봄꽃연구1	
+10255	120	end	촌장 타타모의 봄꽃연구2	
+10256	120	end	촌장 타타모의 봄꽃연구3	
+10260	10	end	순결한 향수 만들기1	
+10261	26	end	순결한 향수 만들기2	
+10262	51	end	순결한 향수 만들기3	
+10263	81	end	순결한 향수 만들기4	
+10264	10	end+start	숨어있는 몬스터 퇴치	
+10265	26	end+start	숨어있는 몬스터 퇴치	
+10266	51	end+start	숨어있는 몬스터 퇴치	
+10267	81	end+start	숨어있는 몬스터 퇴치	
+10268	10	end	가가의 사랑 편지1	
+10270	26	end	가가의 사랑 편지2	
+10271	51	end	가가의 사랑 편지3	
+10272	81	end	가가의 사랑 편지4	
+10274	13	end	메이플 6주년 파티준비	
+10275	26	end	메이플 6주년 파티준비!	
+10276	41	end	메이플 6주년 파티준비!!	
+10277	71	end	메이플 6주년 파티준비!!!	
+10278	13	end	메이플 6주년 축하해	
+10279	26	end	메이플 6주년 축하해!	
+10280	41	end	메이플 6주년 축하해!!	
+10281	71	end	메이플 6주년 축하해!!!	
+10282	13	end+start	인기 몬스터의 초상화 : 주황버섯	
+10283	31	end+start	인기 몬스터의 초상화 : 옥토퍼스	
+10284	71	end+start	인기 몬스터의 초상화 : 예티	
+10287	10	start	아르미의 황금 단풍잎	
+10300	13	end	Making the Witch's Secure Broomstick	
+10301	31	end	Making the Witch's Solid Broomstick	
+10302	71	end	Making the Witch's Sturdy Broomstick	
+10311	13	end	A Petrified Mouse	
+10312	13	end	Gaga's Glasses	
+10313	13	end	Cassandra's Crystal Ball	
+10314	13	end	A Shiny Watch	
+10315	13	end	A Nice Cleat	
+10316	13	end	Quest Completion Book	
+10317	13	end	A Pretty Hair-Tie	
+10318	13	end	An Old Shoe	
+10319	0	end+start	Artifact Hunt 1000 points acquired!	
+10320	0	end+start	Artifact Hunt 2500 points acquired!	
+10321	0	end+start	Artifact Hunt 4000 points acquired!	
+10324	0	end	Vaughn Lee's Cleat	
+10325	0	end	Stan's Cleat	
+10326	0	end	Louie's Cleat	
+10327	0	end	Corba's Watch	
+10329	13	start	Start the Artifact Hunt	
+10330	10	end	Challenge! Honorable Mesoranger	
+10331	0	end+start	Special Order! Find Agent E!	
+10332	0	end+start	Special Order! Find Agent S!	
+10333	0	start	Special Order! Find Agent O!	
+10340	13	start	The Return!	
+10341	0	start	Aran's Revival	
+10342	13	end	Vague Aran Memories	
+10344	0	end	Dim Aran Memories	
+10345	0	end	Signs of the Revival	
+10346	0	end	Faint Aran Memories	
+10347	0	end	The Wolf In Waiting	
+10348	0	end	Cloudy Aran Memories	
+10349	0	end	Preparing for the Arrival	
+10350	0	end	Lingering Aran Memories	
+10351	0	start	The Hero's Memory	
+10352	0	end	Flickering Aran Memories	
+10353	0	end	The Truth About Memory Fragments	
+10354	0	start	To Whom Should Cassandra's Album Go?	
+10355	0	end	Delivering Cassandra's Album	
+10356	0	end	Delivering Cassandra's Album	
+10360	13	end	Aran Welcome Celebration	
+10370	15	end	Find the Master of Combos	
+10380	20	start	Aran's Return	
+10394	2	end	Perfect Pitch - Level Up Event	
+10395	13	end+start	류호의 이주민	
+10396	1	end+start	류호의 도전자	
+10397	1	end+start	류호의 정착자	
+10398	1	end+start	류호의 개척자	
+10400	13	start	The 2010 Winter King / Winter Queen Event!	
+10401	13	start	The True Winter King / Winter Queen Event of 2010!	
+10415	13	end	Winter Bingo	
+10417	31	end	Winter Bingo	
+10418	51	end	Winter Bingo	
+10419	71	end	Winter Bingo	
+10420	91	end	Winter Bingo	
+10450	13	start	레인보우 위크:빨간색의 마법	
+10451	13	start	레인보우 위크:빨간색의 마법	
+10452	13	end+start	레인보우 위크:노란색의 마법	
+10453	13	end	레인보우 위크:노란색의 마법	
+10454	13	end	레인보우 위크:노란색의 마법	
+10455	13	end	레인보우 위크:노란색의 마법	
+10456	13	end	레인보우 위크:노란색의 마법	
+10457	13	end	레인보우 위크:노란색의 마법	
+10470	15	start	별별 페스티발	
+19000	0	start	Honorable Mesoranger	
+19001	0	start	Maple Nut	
+19002	0	start	The 2nd Honorable Mesoranger	
+19005	0	start	Top 10 in Artifact Hunt	
+19006	0	start	Mystical Artifact Discoverer	
+20015	6	start	Greetings From the Young Empress	
+20500	50	start	기사의 품위	
+20502	50	end+start	티티아나의 알	
+20506	50	end	티티아나를 잃어버렸어요!	
+20507	100	start	기사의 품격	
+20509	100	end	유리온실 돌보기	
+28117	10	start	4 Candles	
+28118	10	start	4 Year Anniversary Cake	
+28131	0	end	Soft and Cozy Chief's Chair	
+28137	10	end	Spirit Week Event - September 29th	
+28138	10	end	Spirit Week Event - October 6th	
+28139	10	end	Spirit Week Event - October 13th	
+28140	10	end	Spirit Week Event - October 20th	
+28141	0	start	Spirit Week Event - Cassandra's Candle 	
+28142	0	start	Spirit Week Event - Cassandra's Candle 	
+28143	0	start	Spirit Week Event - Cassandra's Candle 	
+28144	0	start	Spirit Week Event - Cassandra's Candle 	
+28145	10	end	Spirit Week Event - September 24th	
+28146	10	end	Spirit Week Event - October 1st	
+28147	10	end	Spirit Week Event - October 8th	
+28148	10	end	Spirit Week Event - October 15th	
+28149	0	start	Spirit Week Event - Cassandra's Candle 	
+28150	0	start	Spirit Week Event - Cassandra's Candle 	
+28151	0	start	Spirit Week Event - Cassandra's Candle 	
+28152	0	start	Spirit Week Event - Cassandra's Candle 	
+28153	10	end	Spirit Week Event - October 27th	
+28154	0	start	Spirit Week Event - Cassandra's Candle 	
+28155	10	end	Spirit Week Event - October 22nd	
+28156	0	start	Spirit Week Event - Cassandra's Candle 	
+28157	10	end	Spirit Week Event - September 28th	
+28158	10	end	Spirit Week Event - October 5th	
+28159	10	end	Spirit Week Event - October 12th	
+28160	10	end	Spirit Week Event - October 19th	
+28161	10	end	Spirit Week Event - October 26th	
+28284	11	end	Cassandra's Trick or Treat	
+28285	31	end	Cassandra's Trick or Treat	
+28286	51	end	Cassandra's Trick or Treat	
+28304	0	end	Olivia: "Bring My Daddy"	
+28311	0	end	Olivia: "Bring My Daddy"	
+28318	0	end	Olivia: "Bring My Daddy"	
+28326	10	end	Yellow Turkey Egg Hunt	
+28327	31	end	Green Turkey Egg Hunt	
+28328	61	end	Blue Turkey Egg Hunt	
+28333	13	start	New Year's Presents from Cassandra	
+28337	8	end	Cupid's Lost Arrows	
+29002	20	end+start	Title Challenge - Celebrity!	
+29400	10	end+start	Title Challenge - Veteran Hunter	
+29500	0	end+start	Title Challenge - Maple Idol Star	
+29501	0	end+start	Title Challenge - Horned Tail Slayer	
+29502	0	end+start	Title Challenge - Pink Bean Slayer	
+29503	30	end+start	Title Challenge - Donation King	
+29505	51	end+start	The Carnivalian of Absolute Victory	
+29506	51	end+start	The Gifted Carnivalian	
+29508	10	end	Outstanding Citizen	
+29904	0	start	Noblesse	
+29905	0	start	Noblesse	
+29910	180	start	Gallant Warrior	
+29911	180	start	Wiseman	
+29912	180	start	Lord Sniper	
+29913	180	start	Legendary Thief	
+29914	180	start	King Pirate	
+29915	25	start	Mu Lung Dojo Vanquisher	
+29916	0	start	Henesys Donor Medal	
+29917	0	start	Ellinia Donor Medal	
+29918	0	start	Perion Donor Medal	
+29919	0	start	Kerning City Donor Medal	
+29920	0	start	Sleepywood Donor Medal	
+29921	0	start	Nautilus Donor Medal	
+29922	10	start	Veteran Hunter	
+29923	10	start	Legendary Hunter	
+29933	0	start	Lith Harbor Donor	

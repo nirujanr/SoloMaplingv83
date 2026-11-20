@@ -237,7 +237,7 @@ public class EventInstanceManager {
     }
 
     public synchronized void registerPlayer(final Character chr, boolean runEntryScript) {
-        if (chr == null || !chr.isLoggedinWorld() || disposed) {
+        if (chr == null || (!chr.isLoggedinWorld() && !soloMapling.ArtificialPlayer.BotHelpers.isBot(chr)) || disposed) { // SM: bots never count as logged in
             return;
         }
 
@@ -263,7 +263,7 @@ public class EventInstanceManager {
     }
 
     public void exitPlayer(final Character chr) {
-        if (chr == null || !chr.isLoggedin()) {
+        if (chr == null || (!chr.isLoggedin() && !soloMapling.ArtificialPlayer.BotHelpers.isBot(chr))) {
             return;
         }
 
@@ -1253,6 +1253,7 @@ public class EventInstanceManager {
         MapleMap map = getMapInstance(mapId);
         map.broadcastMessage(PacketCreator.showEffect("quest/party/wrong_kor"));
         map.broadcastMessage(PacketCreator.playSound("Party1/Failed"));
+        soloMapling.ArtificialPlayer.BotTypes.KPQ.KPQOrchestrator.onWrongEffect(this, mapId); // SM: KPQ bots try the next combo
     }
 
     public final void showClearEffect() {

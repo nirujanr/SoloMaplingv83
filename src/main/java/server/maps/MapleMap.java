@@ -1071,6 +1071,12 @@ public class MapleMap {
         }
     }
 
+    /** SoloMapling: quest-tagged drop (only shown to players who need the item). Used by bot kills. */
+    public void spawnQuestItemDrop(final Item idrop, final Point dropPos, final MapObject dropper, final Character owner,
+                                   final byte droptype, final short questid, short delay) {
+        spawnDrop(idrop, calcDropPos(dropPos, dropper.getPosition()), dropper, owner, droptype, questid, delay);
+    }
+
     private void spawnDrop(final Item idrop, final Point dropPos, final MapObject dropper, final Character chr,
                            final byte droptype, final short questid, short delay) {
         final MapItem mdrop = new MapItem(idrop, dropPos, dropper, chr, chr.getClient(), droptype, false, questid);

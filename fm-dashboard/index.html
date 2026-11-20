@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FM & Drops · SoloMapling</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a66; --line: #e4e2dc;
+    --accent: #e8711c; --accent-soft: #fdf0e4; --bot: #5b6cd8; --bot-soft: #eceefc;
+    --player: #1f9d6a; --player-soft: #e4f6ee; --chip: #f1efea;
+    --S: #c7861a; --A: #5b6cd8; --B: #6b6a66;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514; --panel: #1e1e1c; --ink: #ecebe7; --muted: #9a9890; --line: #2f2e2b;
+      --accent: #f08a3c; --accent-soft: #3a2616; --bot: #8f9bf0; --bot-soft: #23263d;
+      --player: #4cc796; --player-soft: #17302a; --chip: #2a2927;
+      --S: #e6a83a; --A: #8f9bf0; --B: #9a9890;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { padding: 20px 28px 8px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+  h1 { font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+  h1 span { color: var(--accent); }
+  .updated { color: var(--muted); font-size: 13px; }
+  .updated.stale { color: #c0392b; }
+  .spacer { flex: 1; }
+  label.toggle { color: var(--muted); font-size: 13px; display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+  main { padding: 8px 28px 40px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 8px 0 16px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .tile .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .tile .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+  .filters { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px;
+             display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .filters input, .filters select {
+    font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+    border-radius: 7px; padding: 7px 10px; }
+  .filters input:focus, .filters select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  #q { flex: 1 1 260px; min-width: 200px; font-size: 15px; }
+  .price-range input { width: 110px; }
+  .price-range { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+  button.link { font: inherit; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 6px 4px; }
+
+  .tablewrap { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600;
+       position: sticky; top: 0; background: var(--panel); white-space: nowrap; user-select: none; }
+  th.sortable { cursor: pointer; }
+  th.sortable:hover { color: var(--ink); }
+  th .arrow { color: var(--accent); }
+  tbody tr:hover { background: var(--accent-soft); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  th.num { text-align: right; }
+  .name { font-weight: 600; }
+  .sub { color: var(--muted); font-size: 12px; }
+  .price { font-weight: 650; }
+  .chip { display: inline-block; background: var(--chip); border-radius: 5px; padding: 1px 6px; margin: 1px 3px 1px 0;
+          font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .chip.up { color: var(--accent); font-weight: 600; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 1px 8px; }
+  .badge.bot { background: var(--bot-soft); color: var(--bot); }
+  .badge.player { background: var(--player-soft); color: var(--player); }
+  .tier { font-weight: 700; font-size: 12px; margin-left: 4px; }
+  .tier-S { color: var(--S); } .tier-A { color: var(--A); } .tier-B { color: var(--B); }
+  .empty { padding: 48px 20px; text-align: center; color: var(--muted); }
+  .empty strong { display: block; color: var(--ink); font-size: 16px; margin-bottom: 6px; }
+  .more { text-align: center; padding: 14px; }
+  .more button { font: inherit; background: var(--accent); color: #fff; border: 0; border-radius: 7px; padding: 8px 18px; cursor: pointer; }
+  .count { color: var(--muted); font-size: 13px; margin: 0 0 8px 2px; }
+  .tabs { display: inline-flex; gap: 4px; background: var(--chip); border-radius: 9px; padding: 3px; }
+  .tabs button { font: inherit; font-weight: 600; border: 0; background: none; color: var(--muted); padding: 5px 14px;
+                 border-radius: 7px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .fm-only[hidden] { display: none !important; }
+  a.xref { color: var(--accent); text-decoration: none; cursor: pointer; }
+  a.xref:hover { text-decoration: underline; }
+  .badge.boss { background: var(--accent-soft); color: var(--accent); }
+  .badge.quest { background: var(--chip); color: var(--muted); }
+  #d-q { flex: 1 1 260px; min-width: 200px; font-size: 15px; }
+  #d-min { width: 90px; }
+  .chance { font-weight: 650; }
+  .withicon { display: flex; gap: 10px; align-items: center; }
+  .ico { width: 36px; height: 36px; flex: none; object-fit: contain; image-rendering: pixelated;
+         background: var(--chip); border-radius: 7px; padding: 2px; }
+  .ico.mob { width: 44px; height: 44px; image-rendering: auto; }
+  .ico.sm { width: 24px; height: 24px; padding: 1px; border-radius: 5px; }
+  .tabs { flex-wrap: wrap; }
+
+  /* Jobs */
+  .jclass { margin: 0 0 18px; }
+  .jclass h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .jrow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; margin-bottom: 8px; }
+  .jcard { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; min-width: 160px;
+           cursor: pointer; text-align: left; font: inherit; color: inherit; }
+  .jcard:hover { border-color: var(--accent); }
+  .jcard .jn { font-weight: 650; }
+  .jarrow { align-self: center; color: var(--muted); }
+  .tierchip { display: inline-block; font-size: 11px; font-weight: 650; color: var(--accent); background: var(--accent-soft);
+              border-radius: 5px; padding: 0 6px; margin-right: 4px; }
+
+  /* Skills */
+  #s-job { min-width: 230px; }
+  #s-q { flex: 1 1 260px; min-width: 200px; font-size: 15px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .card .desc { margin: 8px 0; white-space: pre-line; }
+  .card .lvl { font-size: 13px; background: var(--bg); border-radius: 7px; padding: 6px 9px; margin-top: 6px; white-space: pre-line; }
+  .card .lvl b { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .card .lvls { max-height: 260px; overflow: auto; margin-top: 6px; font-size: 13px; }
+  .card .lvls div { padding: 3px 0; border-bottom: 1px solid var(--line); }
+  .card input[type=range] { width: 100%; accent-color: var(--accent); }
+
+  /* Quests */
+  #qq { flex: 1 1 260px; min-width: 200px; font-size: 15px; }
+  #view-quests td:first-child { min-width: 210px; }
+
+  /* Rates + Mobs & Maps */
+  .rates { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+  .rates .chip { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+  #m-q { flex: 1 1 260px; min-width: 200px; font-size: 15px; }
+  .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .detail h2 { margin: 0; font-size: 20px; }
+  .detail h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 18px 0 8px; }
+  .detail .head { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .detail .head img { width: auto; height: auto; max-width: 140px; max-height: 120px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 12px; }
+  .stats div { background: var(--bg); border-radius: 8px; padding: 7px 10px; }
+  .stats .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .stats .v { font-weight: 650; font-variant-numeric: tabular-nums; }
+  .detail table { font-size: 13px; }
+  .back { margin-bottom: 10px; }
+  .maptools { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+  .tog { font: inherit; font-size: 12px; font-weight: 600; border: 1px solid var(--line); background: var(--bg); color: var(--muted);
+         border-radius: 7px; padding: 4px 10px; cursor: pointer; }
+  .tog[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .mapbox { background: #0e1016; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; position: relative; }
+  .mapbox svg { display: block; width: 100%; height: auto; max-height: 560px; }
+  .mapbox .mk { cursor: pointer; }
+  .mapbox .mk:hover { stroke: #fff; stroke-width: 3; }
+  .scene { overflow: auto; max-height: 560px; }
+  .scene img { display: block; max-width: none; height: 520px; image-rendering: auto; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .legend .tog { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+  /* Items */
+  #i-q { flex: 1 1 260px; min-width: 200px; font-size: 15px; }
+  .bigicon { width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated; background: var(--bg);
+             border-radius: 10px; padding: 8px; flex: none; }
+  .effects { margin: 10px 0 0; padding-left: 18px; }
+  .effects li { margin: 2px 0; }
+  .flags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+  #l-table tr.me td { background: var(--accent-soft); font-weight: 650; }
+  #l-rules { margin-top: 14px; }
+  #l-rules .card h3 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  #l-rules .card ul { margin: 0; padding-left: 18px; }
+  #l-rules .card li { margin: 3px 0; }
+  #l-rules .card table { font-size: 13px; }
+  #l-rules .card td, #l-rules .card th { padding: 4px 8px; }
+  .desc-box { margin-top: 12px; padding: 10px 12px; background: var(--bg); border-radius: 8px; white-space: pre-line; }
+  .qitem { display: inline-flex; align-items: center; gap: 4px; background: var(--chip); border-radius: 6px;
+           padding: 1px 6px 1px 2px; margin: 2px 3px 2px 0; font-size: 12px; white-space: nowrap; }
+  .qitem.rand { outline: 1px dashed var(--muted); }
+  details.story summary { cursor: pointer; color: var(--accent); font-size: 12px; }
+  details.story p { white-space: pre-line; margin: 6px 0; color: var(--ink); max-width: 520px; }
+  @media (max-width: 720px) { .cards { grid-template-columns: 1fr; } .jcard { min-width: 0; flex: 1 1 140px; } }
+  @media (max-width: 720px) { header, main { padding-left: 12px; padding-right: 12px; } .hide-sm { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>SoloMapling <span>Market</span></h1>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="fm" aria-selected="true">Free Market</button>
+    <button role="tab" data-tab="items" aria-selected="false">Items</button>
+    <button role="tab" data-tab="drops" aria-selected="false">Drops</button>
+    <button role="tab" data-tab="mobs" aria-selected="false">Mobs</button>
+    <button role="tab" data-tab="maps" aria-selected="false">Maps</button>
+    <button role="tab" data-tab="jobs" aria-selected="false">Jobs</button>
+    <button role="tab" data-tab="skills" aria-selected="false">Skills</button>
+    <button role="tab" data-tab="quests" aria-selected="false">Quests</button>
+    <button role="tab" data-tab="leveling" aria-selected="false">Leveling</button>
+  </nav>
+  <span id="updated" class="updated fm-only">Loading…</span>
+  <span class="spacer"></span>
+  <label class="toggle fm-only"><input type="checkbox" id="auto" checked> Auto-refresh (30s)</label>
+  <span id="d-info" class="updated" hidden></span>
+  <span id="rates" class="rates" title="Server rates from config.yaml"></span>
+</header>
+
+<main id="view-drops" hidden>
+  <section class="filters">
+    <input id="d-q" type="search" placeholder="Search monster or item: name or ID (e.g. snail, 4000019)…">
+    <select id="d-kind">
+      <option value="">All monsters</option><option value="mob">Regular only</option><option value="boss">Bosses only</option>
+      <option value="global">Global drops</option>
+    </select>
+    <select id="d-cat">
+      <option value="">All item types</option>
+      <option value="1">Equip</option><option value="2">Use</option><option value="3">Setup</option>
+      <option value="4">Etc</option><option value="5">Cash</option><option value="0">Mesos</option>
+    </select>
+    <select id="d-quest">
+      <option value="">Quest drops too</option><option value="hide">Hide quest-only</option><option value="only">Quest-only</option>
+    </select>
+    <span class="price-range">Chance ≥ <input id="d-min" type="text" inputmode="decimal" placeholder="% (e.g. 1)"></span>
+    <label class="toggle"><input type="checkbox" id="d-fm"> On sale in FM</label>
+    <button class="link" id="d-reset">Reset</button>
+  </section>
+  <p class="count" id="d-count"></p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr>
+        <th class="sortable" data-dsort="mob">Monster</th>
+        <th class="sortable" data-dsort="item">Item</th>
+        <th class="sortable num" data-dsort="eff">Chance</th>
+        <th class="num">Qty</th>
+        <th class="sortable num" data-dsort="fm">FM price</th>
+      </tr></thead>
+      <tbody id="d-rows"></tbody>
+    </table>
+    <div id="d-empty" class="empty" hidden></div>
+    <div class="more" id="d-more" hidden><button id="d-more-btn">Show more</button></div>
+  </div>
+</main>
+
+<main id="view-items" hidden>
+  <section class="filters">
+    <input id="i-q" type="search" placeholder="Search item: name or ID (e.g. pan lid, 2040705, elixir)…">
+    <select id="i-cat">
+      <option value="">All categories</option><option value="Equip">Equip</option><option value="Use">Use</option>
+      <option value="Setup">Setup</option><option value="Etc">Etc</option><option value="Cash">Cash</option>
+      <option value="Pet">Pet</option><option value="Cosmetic">Cosmetic (NX equips)</option>
+    </select>
+    <select id="i-slot"><option value="">Any equip slot</option></select>
+    <select id="i-job">
+      <option value="">Any job</option><option value="0">Beginner / all jobs</option><option value="1">Warrior</option>
+      <option value="2">Magician</option><option value="4">Bowman</option><option value="8">Thief</option><option value="16">Pirate</option>
+    </select>
+    <span class="price-range">Req level <input id="i-min" type="text" inputmode="numeric" placeholder="min" style="width:70px">
+      – <input id="i-max" type="text" inputmode="numeric" placeholder="max" style="width:70px"></span>
+    <button class="link" id="i-reset">Reset</button>
+  </section>
+  <div id="i-detail" hidden></div>
+  <div id="i-results">
+    <p class="count" id="i-count"></p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th class="sortable" data-isort="name">Item</th>
+          <th class="sortable num" data-isort="lv">Req Lv</th>
+          <th>Stats / effect</th>
+          <th class="sortable num" data-isort="price">NPC sell</th>
+          <th class="num">FM price</th>
+        </tr></thead>
+        <tbody id="i-rows"></tbody>
+      </table>
+      <div id="i-empty" class="empty" hidden></div>
+      <div class="more" id="i-more" hidden><button id="i-more-btn">Show more</button></div>
+    </div>
+  </div>
+</main>
+
+<main id="view-leveling" hidden>
+  <section class="detail">
+    <h2>EXP calculator</h2>
+    <div class="filters" style="margin:12px 0 0;border:0;padding:0;background:none">
+      <span class="price-range">Level <input id="l-lv" type="text" inputmode="numeric" value="30" style="width:70px"></span>
+      <span class="price-range">EXP <input id="l-pct" type="text" inputmode="decimal" value="0" style="width:70px"> %</span>
+      <span class="price-range">Target level <input id="l-to" type="text" inputmode="numeric" placeholder="next" style="width:70px"></span>
+      <span class="price-range">Monster <input id="l-mob" list="l-mobs" placeholder="type a monster name" style="width:220px"></span>
+      <datalist id="l-mobs"></datalist>
+      <select id="l-party"><option value="1">Solo</option><option value="2">Party of 2</option><option value="3">Party of 3</option>
+        <option value="4">Party of 4</option><option value="5">Party of 5</option><option value="6">Party of 6</option></select>
+      <label class="toggle" title="The top damager in a party gets an extra 20% share"><input type="checkbox" id="l-mvp" checked> I do the most damage</label>
+      <label class="toggle"><input type="checkbox" id="l-cyg"> Cygnus Knight (cap 120)</label>
+    </div>
+    <div class="stats" id="l-result"></div>
+    <p class="sub" id="l-note"></p>
+    <h3>Best monsters for your level</h3>
+    <p class="sub">Monsters within 5 levels of you that spawn on a map, ranked by EXP per HP (how fast they give EXP for the damage you put in).</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Monster</th><th class="num">Level</th><th class="num">HP</th><th class="num">EXP / kill</th><th class="num">EXP per HP</th><th class="num">Kills to target</th><th>Where</th></tr></thead>
+      <tbody id="l-best"></tbody>
+    </table></div>
+  </section>
+  <section class="cards" id="l-rules"></section>
+  <section class="detail" style="margin-top:14px">
+    <h2>EXP table</h2>
+    <p class="sub">EXP needed for each level on this server (from ExpTable.java). Monster EXP is multiplied by the EXP rate; this table is not.</p>
+    <div class="tablewrap" style="max-height:520px;overflow:auto"><table>
+      <thead><tr><th class="num">Level</th><th class="num">EXP to next level</th><th class="num">Total EXP to reach</th><th class="num">Way to 200</th></tr></thead>
+      <tbody id="l-table"></tbody>
+    </table></div>
+  </section>
+</main>
+
+<main id="view-mobs" hidden>
+  <section class="filters">
+    <input id="m-q" type="search" placeholder="Search monster: name or ID (e.g. mano, 2220000)…">
+    <input type="hidden" id="m-kind" value="mob">
+    <span class="price-range"><span id="m-lvlabel">Level</span> <input id="m-min" type="text" inputmode="numeric" placeholder="min" style="width:70px">
+      – <input id="m-max" type="text" inputmode="numeric" placeholder="max" style="width:70px"></span>
+    <select id="m-region"><option value="">All regions</option></select>
+    <label class="toggle"><input type="checkbox" id="m-spawn" checked> Only ones that spawn</label>
+    <button class="link" id="m-reset">Reset</button>
+  </section>
+  <div id="m-detail" hidden></div>
+  <div id="m-results">
+    <p class="count" id="m-count"></p>
+    <div class="tablewrap">
+      <table>
+        <thead id="m-head"></thead>
+        <tbody id="m-rows"></tbody>
+      </table>
+      <div id="m-empty" class="empty" hidden></div>
+      <div class="more" id="m-more" hidden><button id="m-more-btn">Show more</button></div>
+    </div>
+  </div>
+</main>
+
+<main id="view-jobs" hidden>
+  <p class="count">Every job and when you can advance. Click a job to see its skills, or its quest count to see the job-restricted quests it can take.</p>
+  <div id="j-tree"></div>
+</main>
+
+<main id="view-skills" hidden>
+  <section class="filters">
+    <select id="s-job"></select>
+    <input id="s-q" type="search" placeholder="Search skill name, description or ID (searches all jobs)…">
+    <label class="toggle"><input type="checkbox" id="s-all"> Show every level</label>
+  </section>
+  <p class="count" id="s-count"></p>
+  <div id="s-list" class="cards"></div>
+</main>
+
+<main id="view-quests" hidden>
+  <section class="filters">
+    <input id="qq" type="search" placeholder="Search quest, NPC, item, monster or ID…">
+    <span class="price-range">My level <input id="q-lv" type="text" inputmode="numeric" placeholder="e.g. 35" style="width:80px"></span>
+    <select id="q-job"><option value="">Any job</option><option value="none">No job requirement</option></select>
+    <select id="q-reward">
+      <option value="">Any reward</option><option value="item">Gives items</option><option value="exp">Gives EXP</option>
+      <option value="meso">Gives mesos</option><option value="skill">Gives a skill</option>
+    </select>
+    <label class="toggle"><input type="checkbox" id="q-kr" checked> Hide untranslated</label>
+    <button class="link" id="q-reset">Reset</button>
+  </section>
+  <p class="count" id="q-count"></p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Quest</th><th class="num">Level</th><th>NPC</th><th>Needs</th><th>Rewards</th></tr></thead>
+      <tbody id="q-rows"></tbody>
+    </table>
+    <div id="q-empty" class="empty" hidden></div>
+    <div class="more" id="q-more" hidden><button id="q-more-btn">Show more</button></div>
+  </div>
+</main>
+
+<main id="view-fm">
+  <section class="tiles">
+    <div class="tile"><div class="k">Listings</div><div class="v" id="t-listings">–</div></div>
+    <div class="tile"><div class="k">Open shops</div><div class="v" id="t-shops">–</div></div>
+    <div class="tile"><div class="k">Unique items</div><div class="v" id="t-unique">–</div></div>
+    <div class="tile"><div class="k">Player listings</div><div class="v" id="t-players">–</div></div>
+  </section>
+
+  <section class="filters">
+    <input id="q" type="search" placeholder="Search item name, ID, seller or shop title…" autofocus>
+    <select id="f-cat">
+      <option value="">All categories</option>
+      <option value="1">Equip</option><option value="2">Use</option><option value="3">Setup</option>
+      <option value="4">Etc</option><option value="5">Cash</option>
+    </select>
+    <select id="f-slot"><option value="">Any equip slot</option></select>
+    <select id="f-region"><option value="">All FMs</option></select>
+    <select id="f-seller">
+      <option value="">Bots & players</option><option value="bot">Bots only</option><option value="player">Players only</option>
+    </select>
+    <select id="f-ch"><option value="">All channels</option></select>
+    <span class="price-range">Price <input id="f-min" type="text" inputmode="numeric" placeholder="min (e.g. 1m)">
+      – <input id="f-max" type="text" inputmode="numeric" placeholder="max"></span>
+    <label class="toggle"><input type="checkbox" id="f-cheapest"> Cheapest per item</label>
+    <button class="link" id="reset">Reset</button>
+  </section>
+
+  <p class="count" id="count"></p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr>
+        <th class="sortable" data-sort="name">Item</th>
+        <th class="sortable num" data-sort="price">Price</th>
+        <th class="sortable num" data-sort="qty">Qty</th>
+        <th class="hide-sm">Stats</th>
+        <th class="sortable" data-sort="owner">Seller</th>
+        <th class="sortable" data-sort="loc">Location</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div id="empty" class="empty" hidden></div>
+    <div class="more" id="more" hidden><button id="more-btn">Show more</button></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const DATA_URL = 'data/listings.json';
+  // Icons: local copies first (data/icons, saved by fetch-icons.ps1 so the page works offline),
+  // then maplestory.io (GMS v83) if a local one is missing; if both fail the icon is just hidden.
+  window.iconFallback = img => {
+    const r = img.dataset.remote;
+    if (r) { img.removeAttribute('data-remote'); img.src = r; } else img.style.visibility = 'hidden';
+  };
+  window.icon = (kind, id) => {
+    const local = `data/icons/${kind}/${id}.${kind === 'mob' ? 'gif' : 'png'}`;
+    const remote = `https://maplestory.io/api/GMS/83/${kind}/${id}/${kind === 'mob' ? 'render/stand' : 'icon'}`;
+    return `<img class="ico${kind === 'mob' ? ' mob' : ''}" loading="lazy" alt="" src="${local}" data-remote="${remote}" onerror="iconFallback(this)">`;
+  };
+  const icon = window.icon;
+  const PAGE = 200;
+  const REGION_NAMES = { henesys: 'Henesys', ludi: 'Ludibrium', perion: 'Perion', elnath: 'El Nath', unknown: 'Other' };
+  const CAT_NAMES = { 1: 'Equip', 2: 'Use', 3: 'Setup', 4: 'Etc', 5: 'Cash' };
+  // v83 equip slot by itemId / 10000
+  const SLOT = { 100: 'Hat', 101: 'Face acc.', 102: 'Eye acc.', 103: 'Earrings', 104: 'Top', 105: 'Overall',
+    106: 'Bottom', 107: 'Shoes', 108: 'Gloves', 109: 'Shield', 110: 'Cape', 111: 'Ring', 112: 'Pendant',
+    113: 'Belt', 114: 'Medal', 130: 'One-handed sword', 131: 'One-handed axe', 132: 'One-handed BW',
+    133: 'Dagger', 137: 'Wand', 138: 'Staff', 140: 'Two-handed sword', 141: 'Two-handed axe', 142: 'Two-handed BW',
+    143: 'Spear', 144: 'Polearm', 145: 'Bow', 146: 'Crossbow', 147: 'Claw', 148: 'Knuckle', 149: 'Gun',
+    170: 'Cash weapon', 180: 'Pet equip', 190: 'Mount', 191: 'Saddle' };
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('en-US');
+  const short = n => n >= 1e9 ? (n / 1e9).toFixed(2).replace(/\.?0+$/, '') + 'b'
+                  : n >= 1e6 ? (n / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'm'
+                  : n >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const parseMeso = s => {
+    s = String(s || '').trim().toLowerCase().replace(/,/g, '');
+    if (!s) return null;
+    const m = s.match(/^(\d+(?:\.\d+)?)\s*([kmb]?)$/);
+    if (!m) return null;
+    return Math.round(parseFloat(m[1]) * ({ '': 1, k: 1e3, m: 1e6, b: 1e9 }[m[2]]));
+  };
+
+  let all = [], view = [], shown = PAGE, generatedAt = 0;
+  let sort = { key: 'price', dir: 1 };
+
+  function enrich(l) {
+    l.cat = Math.floor(l.itemId / 1e6);
+    l.slot = l.cat === 1 ? (SLOT[Math.floor(l.itemId / 1e4)] || 'Equip') : '';
+    l.qty = (l.bundles || 0) * (l.perBundle || 1);
+    l.unit = l.perBundle > 1 ? Math.round(l.price / l.perBundle) : l.price;
+    l.loc = `${l.region}-${String(l.room).padStart(2, '0')}-${l.channel}`;
+    l.hay = [`${l.name} #${l.itemId} ${l.itemId}`, String(l.owner || ''), String(l.shopTitle || '')].map(x => x.toLowerCase());
+    return l;
+  }
+
+  async function load() {
+    try {
+      const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      generatedAt = data.generatedAt || 0;
+      all = (data.listings || []).map(enrich);
+      $('t-shops').textContent = fmt(data.shopCount || 0);
+      fillSelect('f-region', [...new Set(all.map(l => l.region))].sort(), v => REGION_NAMES[v] || v);
+      fillSelect('f-ch', [...new Set(all.map(l => l.channel))].sort((a, b) => a - b), v => `Channel ${v}`);
+      fillSelect('f-slot', [...new Set(all.filter(l => l.slot).map(l => l.slot))].sort(), v => v);
+      $('t-listings').textContent = fmt(all.length);
+      $('t-unique').textContent = fmt(new Set(all.map(l => l.itemId)).size);
+      $('t-players').textContent = fmt(all.filter(l => !l.bot).length);
+      apply(false);
+      document.dispatchEvent(new Event('fm:loaded'));
+    } catch (e) {
+      all = [];
+      generatedAt = 0;
+      apply(false);
+      showEmpty('No listings file yet',
+        'The game server writes it about 10 seconds after it comes online, and bots only open their shops after the first player logs in (and relogs). Check that both containers are running.');
+    }
+    updateStamp();
+  }
+
+  function fillSelect(id, values, label) {
+    const sel = $(id), cur = sel.value, first = sel.options[0].outerHTML;
+    sel.innerHTML = first + values.map(v => `<option value="${esc(v)}">${esc(label(v))}</option>`).join('');
+    if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+  }
+
+  function updateStamp() {
+    const el = $('updated');
+    if (!generatedAt) { el.textContent = 'No data'; el.classList.add('stale'); return; }
+    const age = Math.round((Date.now() - generatedAt) / 1000);
+    const when = new Date(generatedAt).toLocaleTimeString();
+    el.textContent = `Updated ${when} (${age < 60 ? age + 's' : Math.round(age / 60) + ' min'} ago)`;
+    el.classList.toggle('stale', age > 120); // exporter runs every 30s; >2 min means the server stopped
+  }
+
+  function apply(resetPage = true) {
+    const q = $('q').value.trim().toLowerCase();
+    const terms = q ? q.split(/\s+/) : [];
+    const cat = $('f-cat').value, slot = $('f-slot').value, region = $('f-region').value;
+    const seller = $('f-seller').value, ch = $('f-ch').value;
+    const min = parseMeso($('f-min').value), max = parseMeso($('f-max').value);
+
+    let rows = all.filter(l =>
+      (!terms.length || l.hay.some(f => terms.every(t => f.includes(t)))) &&
+      (!cat || l.cat === +cat) &&
+      (!slot || l.slot === slot) &&
+      (!region || l.region === region) &&
+      (!seller || (seller === 'bot') === !!l.bot) &&
+      (!ch || l.channel === +ch) &&
+      (min == null || l.unit >= min) &&
+      (max == null || l.unit <= max));
+
+    if ($('f-cheapest').checked) {
+      const best = new Map();
+      for (const l of rows) {
+        const b = best.get(l.itemId);
+        if (!b || l.unit < b.unit) best.set(l.itemId, l);
+      }
+      const counts = rows.reduce((m, l) => m.set(l.itemId, (m.get(l.itemId) || 0) + 1), new Map());
+      rows = [...best.values()].map(l => ({ ...l, others: counts.get(l.itemId) - 1 }));
+    }
+
+    const k = sort.key, d = sort.dir;
+    rows.sort((a, b) => {
+      const va = k === 'price' ? a.unit : a[k], vb = k === 'price' ? b.unit : b[k];
+      if (typeof va === 'number') return (va - vb) * d || a.name.localeCompare(b.name);
+      return String(va).localeCompare(String(vb)) * d || a.unit - b.unit;
+    });
+
+    view = rows;
+    if (resetPage) shown = PAGE;
+    render();
+  }
+
+  function statsHtml(l) {
+    if (l.cat !== 1) return '';
+    const parts = [];
+    if (l.reqLevel) parts.push(`<span class="chip">Lv ${l.reqLevel}</span>`);
+    if (l.upgrades) parts.push(`<span class="chip up">+${l.upgrades}</span>`);
+    for (const [k, v] of Object.entries(l.stats || {})) parts.push(`<span class="chip">${esc(k)} ${v > 0 ? '+' : ''}${v}</span>`);
+    if (l.slots != null) parts.push(`<span class="chip">${l.slots} slot${l.slots === 1 ? '' : 's'}</span>`);
+    return parts.join('');
+  }
+
+  function render() {
+    const tb = $('rows');
+    const slice = view.slice(0, shown);
+    tb.innerHTML = slice.map(l => `
+      <tr>
+        <td><div class="withicon">${icon('item', l.itemId)}<div><div class="name"><a class="xref" data-item="${l.itemId}" title="Item details">${esc(l.name)}</a></div>
+            <div class="sub">#${l.itemId} · ${l.slot || CAT_NAMES[l.cat] || ''}${l.others ? ` · ${l.others} other listing${l.others === 1 ? '' : 's'}` : ''} · <a class="xref" data-drops="${l.itemId}">who drops it</a></div></div></div></td>
+        <td class="num"><div class="price" title="${fmt(l.price)} mesos">${fmt(l.price)}</div>
+            ${l.perBundle > 1 ? `<div class="sub">${short(l.unit)} each · bundle of ${l.perBundle}</div>` : `<div class="sub">${short(l.price)}</div>`}</td>
+        <td class="num">${fmt(l.qty)}${l.bundles > 1 && l.perBundle > 1 ? `<div class="sub">${l.bundles}×${l.perBundle}</div>` : ''}</td>
+        <td class="hide-sm">${statsHtml(l)}</td>
+        <td><div>${esc(l.owner)} <span class="badge ${l.bot ? 'bot' : 'player'}">${l.bot ? 'Bot' : 'Player'}</span>${l.tier ? `<span class="tier tier-${esc(l.tier)}" title="Bot shop tier">${esc(l.tier)}</span>` : ''}</div>
+            <div class="sub" title="${esc(l.shopTitle)}">${esc((l.shopTitle || '').slice(0, 48))}${(l.shopTitle || '').length > 48 ? '…' : ''}</div></td>
+        <td><div>${esc(REGION_NAMES[l.region] || l.region)} · Room ${l.room}</div>
+            <div class="sub">Ch ${l.channel}${l.shopType === 'playershop' ? ' · player shop' : ''}</div></td>
+      </tr>`).join('');
+
+    $('count').textContent = all.length
+      ? `${fmt(view.length)} result${view.length === 1 ? '' : 's'}${view.length > shown ? ` · showing ${fmt(shown)}` : ''}`
+      : '';
+    $('more').hidden = view.length <= shown;
+    if (all.length && !view.length) showEmpty('No matches', 'Try a shorter search or clear some filters.');
+    else if (all.length) $('empty').hidden = true;
+
+    document.querySelectorAll('th.sortable').forEach(th => {
+      const on = th.dataset.sort === sort.key;
+      th.innerHTML = th.textContent.replace(/[▲▼]/g, '').trim() + (on ? ` <span class="arrow">${sort.dir > 0 ? '▲' : '▼'}</span>` : '');
+    });
+  }
+
+  function showEmpty(title, text) {
+    $('empty').innerHTML = `<strong>${esc(title)}</strong>${esc(text)}`;
+    $('empty').hidden = false;
+  }
+
+  let debounce;
+  $('q').addEventListener('input', () => { clearTimeout(debounce); debounce = setTimeout(apply, 120); });
+  ['f-cat', 'f-slot', 'f-region', 'f-seller', 'f-ch', 'f-cheapest'].forEach(id => $(id).addEventListener('change', () => apply()));
+  ['f-min', 'f-max'].forEach(id => $(id).addEventListener('input', () => { clearTimeout(debounce); debounce = setTimeout(apply, 250); }));
+  $('reset').addEventListener('click', () => {
+    $('q').value = ''; $('f-min').value = ''; $('f-max').value = ''; $('f-cheapest').checked = false;
+    ['f-cat', 'f-slot', 'f-region', 'f-seller', 'f-ch'].forEach(id => $(id).value = '');
+    apply();
+  });
+  $('more-btn').addEventListener('click', () => { shown += PAGE; render(); });
+  document.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', () => {
+    const key = th.dataset.sort;
+    sort = sort.key === key ? { key, dir: -sort.dir } : { key, dir: key === 'qty' ? -1 : 1 };
+    apply(false);
+  }));
+
+  // used by the Drops tab: current listings, and "search the FM for this item"
+  window.fmApi = { listings: () => all, search: q => { $('q').value = q; $('f-cheapest').checked = false; apply(); } };
+
+  load();
+  setInterval(() => { if ($('auto').checked) load(); }, 30000);
+  setInterval(updateStamp, 5000);
+})();
+</script>
+
+<script>
+// ---------------------------------------------------------------- Drops tab
+(() => {
+  const DATA_URL = 'data/drops.json';
+  const PAGE = 200;
+  const CAT_NAMES = { 0: 'Mesos', 1: 'Equip', 2: 'Use', 3: 'Setup', 4: 'Etc', 5: 'Cash' };
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('en-US');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const short = n => n >= 1e9 ? (n / 1e9).toFixed(2).replace(/\.?0+$/, '') + 'b'
+                  : n >= 1e6 ? (n / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'm'
+                  : n >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
+  const pct = p => p >= 1 ? '100%'
+                 : (p * 100 >= 10 ? (p * 100).toFixed(1) : p * 100 >= 1 ? (p * 100).toFixed(2)
+                 : (p * 100).toPrecision(2)).replace(/\.?0+$/, '') + '%';
+
+  let rows = [], view = [], shown = PAGE, loaded = false, info = null;
+  let sort = { key: 'eff', dir: -1 };
+  let fmBest = new Map();
+
+  function computeFm() {
+    fmBest = new Map();
+    for (const l of (window.fmApi ? window.fmApi.listings() : [])) {
+      const b = fmBest.get(l.itemId);
+      if (!b) fmBest.set(l.itemId, { unit: l.unit, n: 1 });
+      else { b.n++; if (l.unit < b.unit) b.unit = l.unit; }
+    }
+  }
+
+  async function load() {
+    try {
+      const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(res.status);
+      const d = await res.json();
+      info = d;
+      const itemName = id => id === 0 ? 'Mesos' : (d.items[id] || `Item ${id}`);
+      const make = (mobId, mob, itemId, min, max, chance, questId, rate) => {
+        const [mobName, lv, boss] = mob;
+        const iname = itemName(itemId);
+        const r = {
+          mobId, mobName, lv, boss: !!boss, global: mobId == null,
+          itemId, itemName: iname, cat: Math.floor(itemId / 1e6),
+          min, max, base: chance / 1e6, eff: Math.min(1, chance * rate / 1e6),
+          quest: questId, questName: questId ? (d.quests[questId] || `Quest ${questId}`) : '',
+        };
+        r.hay = `${mobName} ${iname}`.toLowerCase();
+        return r;
+      };
+      rows = d.drops.map(([m, i, mn, mx, c, q]) => {
+        const mob = d.mobs[m] || [`Mob ${m}`, 0, 0];
+        return make(m, mob, i, mn, mx, c, q, mob[2] ? d.rates.boss : d.rates.drop);
+      });
+      // global drops can come from any monster and are not multiplied by the server drop rate
+      for (const [cont, i, mn, mx, c, q, note] of d.global) {
+        rows.push(make(null, [cont === -1 ? 'Any monster' : `Any monster (continent ${cont})`, 0, 0], i, mn, mx, c, q, 1));
+      }
+      loaded = true;
+      $('d-info').textContent = `${fmt(d.drops.length)} drops · ${fmt(Object.keys(d.mobs).length)} monsters · rate ×${d.rates.drop} (bosses ×${d.rates.boss}) · built ${new Date(d.generatedAt).toLocaleString()}`;
+      computeFm();
+      apply();
+    } catch (e) {
+      $('d-info').textContent = 'No drops file';
+      showEmpty('No drops file yet', 'Run fm-dashboard\\build-drops.ps1 (with the db container running), then reload this page.');
+    }
+  }
+
+  function apply(resetPage = true) {
+    if (!loaded) return;
+    const terms = $('d-q').value.trim().toLowerCase().replace(/#/g, '').split(/\s+/).filter(Boolean);
+    const kind = $('d-kind').value, cat = $('d-cat').value, quest = $('d-quest').value;
+    const minRaw = parseFloat($('d-min').value);
+    const min = isNaN(minRaw) ? null : minRaw / 100;
+    const onFm = $('d-fm').checked;
+
+    view = rows.filter(r =>
+      terms.every(t => /^\d+$/.test(t) ? (r.itemId === +t || r.mobId === +t || r.hay.includes(t)) : r.hay.includes(t)) &&
+      (!kind || (kind === 'global' ? r.global : kind === 'boss' ? r.boss : (!r.boss && !r.global))) &&
+      (cat === '' || r.cat === +cat) &&
+      (!quest || (quest === 'hide' ? !r.quest : !!r.quest)) &&
+      (min == null || r.eff >= min) &&
+      (!onFm || fmBest.has(r.itemId)));
+
+    const k = sort.key, d = sort.dir;
+    const fmVal = r => fmBest.has(r.itemId) ? fmBest.get(r.itemId).unit : (d > 0 ? Infinity : -1);
+    view.sort((a, b) => {
+      if (k === 'mob') return ((a.lv - b.lv) || a.mobName.localeCompare(b.mobName)) * d || b.eff - a.eff;
+      if (k === 'item') return a.itemName.localeCompare(b.itemName) * d || b.eff - a.eff;
+      if (k === 'fm') return (fmVal(a) - fmVal(b)) * d || b.eff - a.eff;
+      return (a.eff - b.eff) * d || a.itemName.localeCompare(b.itemName);
+    });
+    if (resetPage) shown = PAGE;
+    render();
+  }
+
+  function render() {
+    $('d-rows').innerHTML = view.slice(0, shown).map(r => {
+      const fm = fmBest.get(r.itemId);
+      const mr = (window.rates && window.rates.meso) || 1;
+      const qty = r.cat === 0 ? `${fmt(r.min * mr)}–${fmt(r.max * mr)} mesos${mr > 1 ? `<div class="sub">base ${fmt(r.min)}–${fmt(r.max)} · ×${mr}</div>` : ''}`
+                : (r.min === r.max ? fmt(r.min) : `${r.min}–${r.max}`);
+      return `<tr>
+        <td><div class="withicon">${r.global ? '' : window.icon('mob', r.mobId)}<div>
+            <div class="name">${r.global ? esc(r.mobName) : `<a class="xref" data-mob="${r.mobId}" title="Stats, maps and all drops">${esc(r.mobName)}</a>`}
+              ${r.boss ? '<span class="badge boss">Boss</span>' : ''}</div>
+            <div class="sub">${r.global ? 'global drop · server rate not applied' : `#${r.mobId} · Lv ${r.lv || '–'}`}</div></div></div></td>
+        <td><div class="withicon">${r.cat === 0 ? '' : window.icon('item', r.itemId)}<div>
+            <div class="name">${r.cat === 0 ? 'Mesos' : `<a class="xref" data-item="${r.itemId}" title="Item details: stats, who drops it, shops">${esc(r.itemName)}</a>`}
+              ${r.quest ? `<span class="badge quest" title="Only drops while this quest is active">Quest</span>` : ''}</div>
+            <div class="sub">${r.cat === 0 ? '' : `#${r.itemId} · `}${CAT_NAMES[r.cat] || ''}${r.quest ? ` · ${esc(r.questName)}` : ''}</div></div></div></td>
+        <td class="num"><div class="chance">${pct(r.eff)}</div>
+            <div class="sub" title="Base chance in drop_data: ${fmt(Math.round(r.base * 1e6))} / 1,000,000">base ${pct(r.base)}${r.eff < 1 ? ` · 1 in ${fmt(Math.max(1, Math.round(1 / r.eff)))}` : ''}</div></td>
+        <td class="num">${qty}</td>
+        <td class="num">${fm ? `<a class="xref price" data-fm="${r.itemId}" title="Cheapest unit price right now">${fmt(fm.unit)}</a>
+              <div class="sub">${short(fm.unit)} · ${fm.n} listing${fm.n === 1 ? '' : 's'}</div>` : '<span class="sub">–</span>'}</td>
+      </tr>`;
+    }).join('');
+    $('d-count').textContent = `${fmt(view.length)} result${view.length === 1 ? '' : 's'}${view.length > shown ? ` · showing ${fmt(shown)}` : ''}`;
+    $('d-more').hidden = view.length <= shown;
+    if (!view.length) showEmpty('No matches', 'Try a shorter search or clear some filters.');
+    else $('d-empty').hidden = true;
+    document.querySelectorAll('th[data-dsort]').forEach(th => {
+      const on = th.dataset.dsort === sort.key;
+      th.innerHTML = th.textContent.replace(/[▲▼]/g, '').trim() + (on ? ` <span class="arrow">${sort.dir > 0 ? '▲' : '▼'}</span>` : '');
+    });
+  }
+
+  function showEmpty(title, text) {
+    $('d-empty').innerHTML = `<strong>${esc(title)}</strong>${esc(text)}`;
+    $('d-empty').hidden = false;
+  }
+
+  // ---- tabs
+  function showTab(tab) {
+    const viewOf = t => t === 'maps' ? 'mobs' : t;   // the Mobs and Maps tabs share one view
+    if (!document.getElementById('view-' + viewOf(tab))) tab = 'fm';
+    document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+    document.querySelectorAll('main[id^="view-"]').forEach(m => m.hidden = m.id !== 'view-' + viewOf(tab));
+    document.querySelectorAll('.fm-only').forEach(el => el.hidden = tab !== 'fm');
+    $('d-info').hidden = tab !== 'drops';
+    try { localStorage.setItem('tab', tab); } catch (e) {}
+    if (tab === 'drops') { if (!info) load(); $('d-q').focus(); }
+    else if (tab === 'fm') $('q').focus();
+    document.dispatchEvent(new CustomEvent('tab:show', { detail: tab }));
+  }
+  window.showTab = showTab;
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+
+  // ---- cross links: FM "who drops it", Drops mob/item name, Drops FM price
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a.xref');
+    if (!a) return;
+    e.preventDefault();
+    if (a.dataset.drops) { $('d-q').value = a.dataset.drops; showTab('drops'); apply(); }
+    else if (a.dataset.q) { $('d-q').value = a.dataset.q; apply(); window.scrollTo(0, 0); }
+    else if (a.dataset.fm) { showTab('fm'); window.fmApi.search(a.dataset.fm); }
+  });
+
+  document.addEventListener('fm:loaded', () => { computeFm(); if (loaded) apply(false); });
+
+  // used by the Mobs & Maps tab
+  window.dropsApi = {
+    load: () => loaded ? Promise.resolve() : load(),
+    forMob: id => rows.filter(r => r.mobId === id),
+    forItem: id => rows.filter(r => r.itemId === id),
+    fm: id => fmBest.get(id),
+    pct, short,
+    search: q => { $('d-q').value = q; showTab('drops'); apply(); },
+  };
+
+  let debounce;
+  ['d-q', 'd-min'].forEach(id => $(id).addEventListener('input', () => { clearTimeout(debounce); debounce = setTimeout(apply, 150); }));
+  ['d-kind', 'd-cat', 'd-quest', 'd-fm'].forEach(id => $(id).addEventListener('change', () => apply()));
+  $('d-reset').addEventListener('click', () => {
+    ['d-q', 'd-min', 'd-kind', 'd-cat', 'd-quest'].forEach(id => $(id).value = '');
+    $('d-fm').checked = false;
+    apply();
+  });
+  $('d-more-btn').addEventListener('click', () => { shown += PAGE; render(); });
+  document.querySelectorAll('th[data-dsort]').forEach(th => th.addEventListener('click', () => {
+    const key = th.dataset.dsort;
+    sort = sort.key === key ? { key, dir: -sort.dir } : { key, dir: key === 'eff' ? -1 : 1 };
+    apply(false);
+  }));
+
+  let saved = 'fm';
+  try { saved = localStorage.getItem('tab') || 'fm'; } catch (e) {}
+  window.addEventListener('load', () => showTab(saved));
+})();
+</script>
+<script src="gamedata.js"></script>
+<script src="mobmaps.js"></script>
+<script src="items.js"></script>
+<script src="leveling.js"></script>
+</body>
+</html>

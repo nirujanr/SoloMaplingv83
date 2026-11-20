@@ -65,6 +65,8 @@ public final class GeneralChatHandler extends AbstractPacketHandler {
             MessageQueue.getInstance().addMessage("primary", new ChatMessage(c.getPlayer(), s)); // SM NOTE Allows player to interact with bots.
 
             BotBuffRequestHandler.tryHandle(chr, s); // SM: "hs pls" etc -> nearest eligible bot grants the buff
+            soloMapling.ArtificialPlayer.BotTypes.KPQ.KPQOrchestrator.onPlayerChat(chr, s); // SM: KPQ bot orders
+            soloMapling.ArtificialPlayer.BotTypes.PawnBrokerBot.onPlayerChat(chr, s); // SM: Pawn Broker greeting
 
             if (!chr.isHidden()) {
                 chr.getMap().broadcastMessage(PacketCreator.getChatText(chr.getId(), s, chr.getWhiteChat(), show));

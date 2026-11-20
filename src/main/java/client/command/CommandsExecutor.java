@@ -531,16 +531,18 @@ public class CommandsExecutor {
         addCommand("pnpcremove", 4, PnpcRemoveCommand.class);
         addCommand("pmob", 4, PmobCommand.class);
         addCommand("pmobremove", 4, PmobRemoveCommand.class);
-        addCommand("bot", 4, ArtificialPlayerCommand.class);
-        addCommand("opq", 4, OPQCommands.class);
+        addCommand("bot", 0, ArtificialPlayerCommand.class);
+        addCommand("opq", 0, OPQCommands.class);
+        addCommand("kpq", 0, client.command.commands.gm4.KPQCommands.class);
+        addCommand("pawn", 0, client.command.commands.gm4.PawnCommands.class);
         addCommand("reactor", 4, ReactorCommands.class);
-        addCommand("move", 4, BotMoveCommand.class);
-        addCommand("gcmove", 4, GCMoveCommand.class);
-        addCommand("betafmshop", 4, ArtificialFreeMarketCommand.class);
+        addCommand("move", 0, BotMoveCommand.class);
+        addCommand("gcmove", 0, GCMoveCommand.class);
+        addCommand("betafmshop", 0, ArtificialFreeMarketCommand.class);
         addCommand("test", 4, TestDevCommand.class);
-        addCommand("fmbot", 4, FMBotCommand.class);
-        addCommand("tradebot", 4, TradeBotTestCommand.class);
-        addCommand("env", 4, EnvironmentCommand.class);
+        addCommand("fmbot", 0, FMBotCommand.class);
+        addCommand("tradebot", 0, TradeBotTestCommand.class);
+        addCommand("env", 0, EnvironmentCommand.class);
 
         commandsNameDesc.add(levelCommandsCursor);
     }

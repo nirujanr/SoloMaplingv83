@@ -332,6 +332,7 @@ public final class PlayerInteractionHandler extends AbstractPacketHandler {
                 HiredMerchant merchant = chr.getHiredMerchant();
                 if (chr.getTrade() != null) {
                     chr.getTrade().chat(chatMsg);
+                    soloMapling.ArtificialPlayer.BotTypes.PawnBrokerBot.onTradeChat(chr, chatMsg);
                 } else if (chr.getPlayerShop() != null) { //mini game
                     PlayerShop shop = chr.getPlayerShop();
                     if (shop != null) {

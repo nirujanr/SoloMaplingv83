@@ -196,8 +196,8 @@ server:
     LOGIN_ATTEMPT_DURATION: 120         #Period in seconds the login attempt remains registered on the system.
 
     #Ip Configuration
-    HOST: 127.0.0.1                 #WAN IPv4 address
-    LANHOST: 127.0.0.1              #LAN IPv4 address
+    HOST: 192.168.0.182             #WAN IPv4 address (this PC's LAN IP, for other computers on the home network)
+    LANHOST: 192.168.0.182          #LAN IPv4 address. Under Docker every client shows up as 172.19.0.1 (a LAN address), so all clients are sent here for the channel connection
     LOCALHOST: 127.0.0.1            #Loopback IPv4 address
     GMSERVER: false
 

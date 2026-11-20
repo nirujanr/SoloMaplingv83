@@ -83,6 +83,11 @@ public class ItemDatabase {
         }
     }
 
+    /** Every item id the price database knows (read-only view). */
+    public java.util.Set<Integer> getAllItemIds() {
+        return java.util.Collections.unmodifiableSet(itemYamlDB.keySet());
+    }
+
     public ItemNode getItemData(int variantId) {
         return itemYamlDB.get(variantId); // Returns null if variantId is not in the map
     }

@@ -26,39 +26,26 @@ import client.Client;
 import net.AbstractPacketHandler;
 import net.packet.InPacket;
 import scripting.quest.QuestScriptManager;
-import server.life.NPC;
 import server.quest.Quest;
-
-import java.awt.*;
 
 /**
  * @author Matze
  */
 public final class QuestActionHandler extends AbstractPacketHandler {
 
-    // isNpcNearby thanks to GabrielSin
-    private static boolean isNpcNearby(InPacket p, Character player, Quest quest, int npcId) {
-        Point playerP;
-        Point pos = player.getPosition();
-
+    // Originally isNpcNearby (thanks GabrielSin), which also required the player to be within
+    // 1200 x 800 px of the NPC. SoloMapling drops the distance part: tall maps like Ellinia put
+    // quest NPCs 2000+ px from the bottom, so quest-log / quest-helper accepts kept failing.
+    // The NPC still has to be on the player's current map.
+    private static boolean isNpcOnMap(InPacket p, Character player, Quest quest, int npcId) {
         if (p.available() >= 4) {
-            playerP = new Point(p.readShort(), p.readShort());
-            if (playerP.distance(pos) > 1000) {     // thanks Darter (YungMoozi) for reporting unchecked player position
-                playerP = pos;
-            }
-        } else {
-            playerP = pos;
+            p.readShort();  // client-reported player x/y: unused, but must be consumed
+            p.readShort();  // so the reward selection that follows is read correctly
         }
 
         if (!quest.isAutoStart() && !quest.isAutoComplete()) {
-            NPC npc = player.getMap().getNPCById(npcId);
-            if (npc == null) {
-                return false;
-            }
-
-            Point npcP = npc.getPosition();
-            if (Math.abs(npcP.getX() - playerP.getX()) > 1200 || Math.abs(npcP.getY() - playerP.getY()) > 800) {
-                player.dropMessage(5, "Approach the NPC to fulfill this quest operation.");
+            if (player.getMap().getNPCById(npcId) == null) {
+                player.dropMessage(5, "Go to the NPC's map to fulfill this quest operation.");
                 return false;
             }
         }
@@ -81,7 +68,7 @@ public final class QuestActionHandler extends AbstractPacketHandler {
             break;
         case 1: { // Start Quest
             int npc = p.readInt();
-            if (!isNpcNearby(p, player, quest, npc)) {
+            if (!isNpcOnMap(p, player, quest, npc)) {
                 return;
             }
             if (quest.canStart(player, npc)) {
@@ -91,7 +78,7 @@ public final class QuestActionHandler extends AbstractPacketHandler {
         }
         case 2: { // Complete Quest
             int npc = p.readInt();
-            if (!isNpcNearby(p, player, quest, npc)) {
+            if (!isNpcOnMap(p, player, quest, npc)) {
                 return;
             }
             if (quest.canComplete(player, npc)) {
@@ -109,7 +96,7 @@ public final class QuestActionHandler extends AbstractPacketHandler {
             break;
         case 4: { // scripted start quest
             int npc = p.readInt();
-            if (!isNpcNearby(p, player, quest, npc)) {
+            if (!isNpcOnMap(p, player, quest, npc)) {
                 return;
             }
             if (quest.canStart(player, npc)) {
@@ -119,7 +106,7 @@ public final class QuestActionHandler extends AbstractPacketHandler {
         }
         case 5: { // scripted end quests
             int npc = p.readInt();
-            if (!isNpcNearby(p, player, quest, npc)) {
+            if (!isNpcOnMap(p, player, quest, npc)) {
                 return;
             }
             if (quest.canComplete(player, npc)) {

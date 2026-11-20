@@ -63,6 +63,7 @@ public final class MultiChatHandler extends AbstractPacketHandler {
         } else if (type == 1 && player.getParty() != null) {
             world.partyChat(player.getParty(), chattext, player.getName());
             ChatLogger.log(c, "Party", chattext);
+            soloMapling.ArtificialPlayer.BotTypes.KPQ.KPQOrchestrator.onPlayerChat(player, chattext); // SM: KPQ bot orders
         } else if (type == 2 && player.getGuildId() > 0) {
             Server.getInstance().guildChat(player.getGuildId(), player.getName(), player.getId(), chattext);
             ChatLogger.log(c, "Guild", chattext);

@@ -253,6 +253,17 @@ public class DropCommands {
         if (mapItem.getOwnerId() == fakechar.getId()) {
             return true; // the bot's own drop
         }
+        if (mapItem.getQuest() > 0) {
+            return false; // quest-tagged drop: it's for the player who needs it, bots leave it alone
+        }
+        if ((mapItem.getItemId() == 4001007 || mapItem.getItemId() == 4001008) && mapItem.isPlayerDrop()
+                && mapItem.getDropper() instanceof Character d && !soloMapling.ArtificialPlayer.BotHelpers.isBot(d)) {
+            return false; // KPQ coupons/passes a real player dropped: only the KPQ hand-off may take them
+        }
+        if (!mapItem.isFFADrop() && mapItem.getDropType() != 2
+                && mapItem.hasExpiredOwnershipTime()) {
+            return false; // permanent-owner drop (e.g. a KPQ bot handing a pass to its leader): never FFA
+        }
         return mapItem.getDropType() == 2
                 || System.currentTimeMillis() - mapItem.getDropTime() >= FFA_OWNER_PROTECT_MS;
     }
